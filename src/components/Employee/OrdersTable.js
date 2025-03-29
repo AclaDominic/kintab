@@ -150,7 +150,7 @@ const OrdersTable = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Price</th>
+              <th>Total Price</th>
               <th>Checkout Date</th>
               <th>Status</th>
               <th>Action</th>

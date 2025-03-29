@@ -5,9 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./Login.css";
 import { CheckCircle } from "lucide-react";
 
-const Register = () => {
+const EmployeeRegister = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "customer" });
+    const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "employee" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -27,7 +27,7 @@ const Register = () => {
             });
             localStorage.setItem("token", response.data.token);
             setSuccess("Registration successful!");
-            setTimeout(() => navigate("/dashboard"), 2000);
+            setTimeout(() => navigate("/employee-dashboard"), 2000);
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
         }
@@ -36,7 +36,7 @@ const Register = () => {
     return (
         <div className="login-background d-flex justify-content-center align-items-center">
             <div className="login-card card p-4 shadow-lg">
-                <h2 className="text-center mb-3">Registeration</h2>
+                <h2 className="text-center mb-3">Employee Registeration</h2>
                 {error && <p className="alert alert-danger">{error}</p>}
                 {success && (
                     <div className="alert alert-success d-flex align-items-center justify-content-center">
@@ -54,7 +54,7 @@ const Register = () => {
                     <div className="mb-3">
                         <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required className="form-control" />
                     </div>
-                    <button type="submit" className="btn btn-success w-100">Register</button>
+                    <button type="submit" className="btn btn-primary w-100">Register</button>
                 </form>
                 <p className="text-center mt-3">Already have an account? <Link to="/login">Login here</Link></p>
             </div>
@@ -62,4 +62,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default EmployeeRegister;
