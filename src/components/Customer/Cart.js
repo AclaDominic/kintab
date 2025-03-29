@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 import CartTable from "./CartTable";
-import OrderTable from "../OrderTable";
+import OrderTable from "./OrderTable";
 
 const Cart = () => {
     const [view, setView] = useState("cart");
