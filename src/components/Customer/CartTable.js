@@ -32,7 +32,38 @@ const CartTable = () => {
     fetchCartItems();
   }, []);
 
-  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const handleRemoveItem = async (itemId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("User not authenticated.");
+        return;
+      }
+
+      const response = await axios.delete(
+        `http://localhost:8000/api/cart/${itemId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Item removed from cart.");
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.id !== itemId)
+        );
+      } else {
+        console.error("Error response:", response.data);
+        alert("Failed to remove item.");
+      }
+    } catch (err) {
+      console.error("Remove item error:", err.response?.data || err.message);
+      alert("Failed to remove item.");
+    }
+  };
+
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -40,58 +71,54 @@ const CartTable = () => {
 
   const handleCheckout = async () => {
     if (!address.trim()) {
-        alert("Please enter your address.");
-        return;
+      alert("Please enter your address.");
+      return;
     }
     if (!contact.trim()) {
-        alert("Please enter your contact number.");
-        return;
+      alert("Please enter your contact number.");
+      return;
     }
     if (!paymentMethod) {
-        alert("Please select a payment method.");
-        return;
+      alert("Please select a payment method.");
+      return;
     }
 
     try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("User not authenticated.");
-            return;
-        }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("User not authenticated.");
+        return;
+      }
 
-        const response = await axios.post(
-            "http://localhost:8000/api/checkout",
-            { address, contact, paymentMethod }, // Sending data for simulation
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+      const response = await axios.post(
+        "http://localhost:8000/api/checkout",
+        { address, contact, paymentMethod, items: cartItems },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-        if (response.status === 200) {
-            alert("Checkout successful! Order ID: " + response.data.order_id);
-            setCartItems([]); // Clear the cart in frontend
-            setShowSummary(false);
-            setCheckoutStep(1);
-
-            // Reset form fields (since it's a simulation)
-            setAddress("");
-            setContact("");
-            setPaymentMethod("");
-        } else {
-            alert(response.data.message || "Failed to checkout.");
-        }
+      if (response.status === 200) {
+        alert("Checkout successful! Order ID: " + response.data.order_id);
+        setCartItems([]); // Clear cart after checkout
+        setShowSummary(false);
+        setCheckoutStep(1);
+        setAddress("");
+        setContact("");
+        setPaymentMethod("");
+      } else {
+        alert(response.data.message || "Failed to checkout.");
+      }
     } catch (error) {
-        console.error("Checkout error:", error);
-        alert(error.response?.data?.message || "An error occurred during checkout.");
+      console.error("Checkout error:", error);
+      alert(error.response?.data?.message || "An error occurred during checkout.");
     }
-};
-
-
+  };
 
   if (loading) return <p>Loading cart...</p>;
   if (error) return <p className="text-danger">{error}</p>;
 
   return (
     <div>
-      <h5>Total Items in Cart: {totalQuantity}</h5>
+      <h5>Total Items in Cart: {totalItems}</h5>
       <table className="table">
         <thead>
           <tr>
@@ -99,6 +126,7 @@ const CartTable = () => {
             <th>Price</th>
             <th>Quantity</th>
             <th>Total</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -109,6 +137,11 @@ const CartTable = () => {
                 <td>₱{item.price}</td>
                 <td>{item.quantity}</td>
                 <td>₱{item.price * item.quantity}</td>
+                <td>
+                  <button className="btn btn-danger" onClick={() => handleRemoveItem(item.id)}>
+                    Remove
+                  </button>
+                </td>
               </tr>
             ))
           ) : (
@@ -145,7 +178,7 @@ const CartTable = () => {
               <div className="modal-body">
                 {checkoutStep === 1 ? (
                   <>
-                    <p>Total Quantity: {totalQuantity}</p>
+                    <p>Total Quantity: {totalItems}</p>
                     <p>Total Price: ₱{totalPrice}</p>
                   </>
                 ) : (
@@ -211,8 +244,6 @@ const CartTable = () => {
       )}
     </div>
   );
-
-
 };
 
 export default CartTable;
