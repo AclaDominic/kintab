@@ -19,19 +19,26 @@ const EmployeeRegister = () => {
         e.preventDefault();
         setError("");
         setSuccess("");
+    
         try {
+            // Register the employee
             const response = await axios.post("http://127.0.0.1:8000/api/register", formData, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                headers: { "Content-Type": "application/json" }
             });
+    
+            // Store token
             localStorage.setItem("token", response.data.token);
-            setSuccess("Registration successful!");
-            setTimeout(() => navigate("/employee-dashboard"), 2000);
+    
+            // Force state update to reflect login immediately
+            window.dispatchEvent(new Event("storage"));
+    
+            setSuccess("Registration successful! Redirecting...");
+            setTimeout(() => navigate("/employee-dashboard"), 1000);
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
         }
     };
+    
 
     return (
         <div className="login-background d-flex justify-content-center align-items-center">
