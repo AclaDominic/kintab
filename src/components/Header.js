@@ -43,7 +43,7 @@ const Header = () => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className="shadow-lg p-3 mb-3 rounded" style={{ background: "linear-gradient(90deg, #2b2d42, #43465c)" }}>
             <Container>
-                <Navbar.Brand href="/dashboard" className="text-light fw-bold">SmartShop</Navbar.Brand>
+                <Navbar.Brand href="/dashboard" className="text-light fw-bold">KoyElectronics</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
